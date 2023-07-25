@@ -6,14 +6,14 @@ from Database import *
 #GUI.testGUI2()
 Database.initDatabase()
 
-GUI.login()
+#GUI.login()
 
 
 ##################################################################################
 ####################### Main Menu Loop ###########################################
 ##################################################################################
 while True:
-    GUI.display_menu(user.user_type)
+    #GUI.display_menu(User.user_type)
 
     choice = input("Enter your choice: ")
 

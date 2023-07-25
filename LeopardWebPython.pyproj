@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>LeopardWebPython</Name>
     <RootNamespace>LeopardWebPython</RootNamespace>
+    <TestFramework>unittest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

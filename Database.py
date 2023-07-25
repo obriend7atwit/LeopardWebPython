@@ -144,13 +144,13 @@ class Database:
                        "SEMESTER TEXT NOT NULL,"
                        "YEAR INTEGER NOT NULL,"
                        "CREDITS INTEGER NOT NULL,"
-                       "INSTRUCTOR INTEGER)")
+                       "INSTRUCTOR TEXT)")
 
-        cursor.execute("INSERT INTO COURSES VALUES(33946, 'ADVANCED DIGITAL CIRCUIT DESIGN', 'BSEE', 800, 930, 'WEDNESDAY, FRIDAY', 'SUMMER', 2023, 4, 1);")
-        cursor.execute("INSERT INTO COURSES VALUES(33950, 'APPLIED PROGRAMMING CONCEPTS', 'BSCO', 800, 950, 'TUESDAY, THURSDAY', 'SUMMER', 2023, 3, 2);")
-        cursor.execute("INSERT INTO COURSES VALUES(33817, 'ALGORITHMS', 'BSCS', 1100, 1220, 'MONDAY, WEDNESDAY', 'SUMMER', 2023, 4, 3);")
-        cursor.execute("INSERT INTO COURSES VALUES(33955, 'COMPUTER NETWORKS', 'BSCO', 1230, 1320, 'MONDAY, WEDNESDAY', 'SUMMER', 2023, 4, 4);")
-        cursor.execute("INSERT INTO COURSES VALUES(33959, 'SIGNALS AND SYSTEMS', 'BSEE', 1300, 1450, 'TUESDAY, THURSDAY', 'SUMMER', 2023, 4, 5);")
+        cursor.execute("INSERT INTO COURSES VALUES(33946, 'ADVANCED DIGITAL CIRCUIT DESIGN', 'BSEE', 800, 930, 'WEDNESDAY, FRIDAY', 'SUMMER', 2023, 4, '');")
+        cursor.execute("INSERT INTO COURSES VALUES(33950, 'APPLIED PROGRAMMING CONCEPTS', 'BSCO', 800, 950, 'TUESDAY, THURSDAY', 'SUMMER', 2023, 3, '');")
+        cursor.execute("INSERT INTO COURSES VALUES(33817, 'ALGORITHMS', 'BSCS', 1100, 1220, 'MONDAY, WEDNESDAY', 'SUMMER', 2023, 4, '');")
+        cursor.execute("INSERT INTO COURSES VALUES(33955, 'COMPUTER NETWORKS', 'BSCO', 1230, 1320, 'MONDAY, WEDNESDAY', 'SUMMER', 2023, 4, '');")
+        cursor.execute("INSERT INTO COURSES VALUES(33959, 'SIGNALS AND SYSTEMS', 'BSEE', 1300, 1450, 'TUESDAY, THURSDAY', 'SUMMER', 2023, 4, '');")
 
 
         # Creating Course_Schedule table --> will grab rows from Courses table
@@ -165,7 +165,7 @@ class Database:
                        "SEMESTER TEXT NOT NULL,"
                        "YEAR INTEGER NOT NULL,"
                        "CREDITS INTEGER NOT NULL,"
-                       "INSTRUCTOR INTEGER)")
+                       "INSTRUCTOR TEXT)")
 
         # Creating Student_Schedule table --> will grab rows from Course_schedule table
         cursor.execute("DROP TABLE IF EXISTS STUDENT_SCHEDULE")
@@ -179,7 +179,7 @@ class Database:
                        "SEMESTER TEXT NOT NULL,"
                        "YEAR INTEGER NOT NULL,"
                        "CREDITS INTEGER NOT NULL,"
-                       "INSTRUCTOR INTEGER)")
+                       "INSTRUCTOR TEXT)")
 
         # Creating Admin table
         cursor.execute("DROP TABLE IF EXISTS ADMIN")
@@ -197,6 +197,7 @@ class Database:
         cursor.execute("INSERT INTO ADMIN VALUES(1, 'Test', 'Admin', 'President', 'Dobbs 210', 'tadmin12', 'testadmin', 'test123')")
 
         # Creating Instructor table
+        cursor.execute("DROP TABLE IF EXISTS INSTRUCTOR")
         cursor.execute("CREATE TABLE IF NOT EXISTS INSTRUCTOR ("
                        "ID INTEGER PRIMARY KEY NOT NULL,"
                        "NAME TEXT NOT NULL,"
@@ -207,8 +208,12 @@ class Database:
                        "EMAIL TEXT NOT NULL,"
                        "USERNAME TEXT NOT NULL,"
                        "PASSWORD TEXT NOT NULL)")
+        
+        # Inserting into instructor
+        cursor.execute("INSERT INTO INSTRUCTOR VALUES(1, 'Test', 'Instructor', 'Professor', '2012', 'BCSE', 'tinstruct12', 'testinstructor', 'test123')")
 
         # Creating Student table
+        cursor.execute("DROP TABLE IF EXISTS STUDENT")
         cursor.execute("CREATE TABLE IF NOT EXISTS STUDENT ("
                        "ID INTEGER PRIMARY KEY NOT NULL,"
                        "NAME TEXT NOT NULL,"
@@ -218,6 +223,9 @@ class Database:
                        "EMAIL TEXT NOT NULL,"
                        "USERNAME TEXT NOT NULL,"
                        "PASSWORD TEXT NOT NULL)")
+
+        # Inserting into Student
+        cursor.execute("INSERT INTO STUDENT VALUES(1, 'Test', 'Student', '2022', 'BCSE', 'tstudent12', 'teststudent', 'test123')")
 
         # Committing the changes
         db_connection.commit()

@@ -120,6 +120,7 @@ class GUI:
 
 """
 
+from encodings import search_function
 from tkinter import *
 import tkinter as tk
 import sqlite3
@@ -174,7 +175,11 @@ class GUI:
 
         # Confirm button for authentication
         confirm = tk.Button(login, text='Confirm', width=15, command=lambda: GUI.auth(username.get(), password.get(), login))
+        # Exit button
+        exit_b = tk.Button(login, text='Exit', width=15, command=login.destroy)
+
         confirm.pack()
+        exit_b.pack()
 
         login.mainloop()
 
@@ -221,20 +226,22 @@ class GUI:
         main_app.title(f"{user_type} Main Application")
 
         menu_label = tk.Label(
-            text="MENU:",
+            text=f"{user_type} MENU:",
             width=50,
             height=10
         )
         menu_label.pack()
 
         if user_type == "ADMIN":
+            main_app['background'] = '#FF8880'
+            menu_label['background'] = '#FF8880'
             # Add buttons for admin actions
-            button1 = tk.Button(main_app, text="Add/Remove course from semester schedule", command=lambda: print("Button 1 clicked"))
-            button2 = tk.Button(main_app, text="Search for course(s)", command=lambda: print("Button 2 clicked"))
-            button3 = tk.Button(main_app, text="Add/Remove Instructor from the system", command=lambda: print("Button 3 clicked"))
-            button4 = tk.Button(main_app, text="Add/Remove Student from the system", command=lambda: print("Button 4 clicked"))
-            button5 = tk.Button(main_app, text="Add/Remove Course to system", command=lambda: print("Button 5 clicked"))
-            button6 = tk.Button(main_app, text="Exit", command=main_app.destroy)
+            button1 = tk.Button(main_app, text="Add/Remove course from semester schedule", bg='red', command=lambda: print("Button 1 clicked"))
+            button2 = tk.Button(main_app, text="Search for course(s)", bg='red', command=lambda: GUI.searchCourses(user_type, main_app))
+            button3 = tk.Button(main_app, text="Add/Remove Instructor from the system", bg='red', command=lambda: print("Button 3 clicked"))
+            button4 = tk.Button(main_app, text="Add/Remove Student from the system", bg='red', command=lambda: print("Button 4 clicked"))
+            button5 = tk.Button(main_app, text="Add/Remove Course to system", bg='red', command=lambda: print("Button 5 clicked"))
+            button6 = tk.Button(main_app, text="Exit", bg='red', command=main_app.destroy)
 
             # Pack buttons
             button1.pack()
@@ -245,10 +252,13 @@ class GUI:
             button6.pack()
 
         elif user_type == "INSTRUCTOR":
+            main_app['background'] = '#FFF98A'
+            menu_label['background'] = '#FFF98A'
             # Add buttons for instructor actions
-            button1 = tk.Button(main_app, text="Add course to semester schedule", command=lambda: print("Button 1 clicked"))
-            button2 = tk.Button(main_app, text="Search for course(s)", command=lambda: print("Button 2 clicked"))
-            button3 = tk.Button(main_app, text="Print course roster", command=lambda: print("Button 3 clicked"))
+            button1 = tk.Button(main_app, text="Add course to semester schedule", bg='yellow', command=lambda: print("Button 1 clicked"))
+            button2 = tk.Button(main_app, text="Search for course(s)", bg='yellow', command=lambda: print("Button 2 clicked"))
+            button3 = tk.Button(main_app, text="Print course roster", bg='yellow', command=lambda: print("Button 3 clicked"))
+            button4 = tk.Button(main_app, text="Exit", bg='yellow', command=main_app.destroy)
 
             # Pack buttons
             button1.pack()
@@ -256,10 +266,13 @@ class GUI:
             button3.pack()
 
         elif user_type == "STUDENT":
+            main_app['background'] = '#AFFC9A'
+            menu_label['background'] = '#AFFC9A'
             # Add buttons for student actions
-            button1 = tk.Button(main_app, text="Add course to semester schedule", command=lambda: print("Button 1 clicked"))
-            button2 = tk.Button(main_app, text="Search for course(s)", command=lambda: print("Button 2 clicked"))
-            button3 = tk.Button(main_app, text="Search all courses", command=lambda: print("Button 3 clicked"))
+            button1 = tk.Button(main_app, text="Add course to semester schedule", bg='#30D402', command=lambda: print("Button 1 clicked"))
+            button2 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda: print("Button 2 clicked"))
+            button3 = tk.Button(main_app, text="Search all courses", bg='#30D402', command=lambda: print("Button 3 clicked"))
+            button4 = tk.Button(main_app, text="Exit", bg='#30D402', command=main_app.destroy)
 
             # Pack buttons
             button1.pack()
@@ -267,6 +280,33 @@ class GUI:
             button3.pack()
 
         main_app.mainloop()
+
+    # Search for courses
+    def searchCourses(user_type, main_app):
+        main_app.destroy()
+        search_menu = Tk()
+        search_menu.title(f"{user_type} Search application")
+
+        # Label for course list
+        search_label = Label(search_menu, text = "ALL COURSES")
+        search_label.pack()
+
+        # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
+        search_list = Listbox(search_menu, bg='white', height=10, width=30, font='Arial')
+
+        #if user_type == "ADMIN":
+        #    admin_courses = 
+        search_list.insert(1, "Test1")
+        search_list.insert(2, "Test2")
+        search_list.insert(3, "Test3")
+        search_list.pack()
+
+        button1 = tk.Button(search_menu, text="Search", bg='red', command=lambda: print("Button 1 clicked"))
+        button2 = tk.Button(search_menu, text="Back", bg='red', command=lambda: print("Button 2 clicked"))
+        button1.pack()
+        button2.pack()
+
+        search_menu.mainloop()
 
     # Test GUI functions (optional)
     def testGUI():
