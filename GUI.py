@@ -288,7 +288,7 @@ class GUI:
         search_menu.title(f"{user_type} Search application")
 
         # Label for course list
-        search_label = Label(search_menu, text = "ALL COURSES")
+        search_label = Label(search_menu, width=50, height=10, text = "ALL COURSES")
         search_label.pack()
 
         # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
@@ -301,12 +301,37 @@ class GUI:
         search_list.insert(3, "Test3")
         search_list.pack()
 
-        button1 = tk.Button(search_menu, text="Search", bg='red', command=lambda: print("Button 1 clicked"))
-        button2 = tk.Button(search_menu, text="Back", bg='red', command=lambda: print("Button 2 clicked"))
+        # Search box
+        sb_frame = Frame(search_menu)
+        search_box = Label(sb_frame, text = "Search for course: ")
+        search_box.pack()
+
+        modify = Entry(sb_frame)
+        modify.pack(side=LEFT, fill=BOTH, expand=1)
+        modify.focus_set()
+
+        search_button = Button(sb_frame, text="Search", command=lambda: GUI.printCourses(user_type, search_list, modify.get()))
+        search_button.pack(side=LEFT)
+        search_button.pack(side=RIGHT)
+        sb_frame.pack(side=TOP)
+
+
+
+        button1 = tk.Button(search_menu, text="Back", bg='red', command=lambda: print("Button 2 clicked"))
         button1.pack()
-        button2.pack()
 
         search_menu.mainloop()
+
+    def printCourses(user_type, search_list, search_term):
+        if user_type == 'ADMIN':
+            courses = admin.search_courses(search_term)
+            search_list.delete(0, END)
+            for x in courses:
+                search_list.insert(END, f"{x}")
+        elif user_type == 'INSTRUCTOR':
+            search_list.insert(1, "Admin courses")
+        elif user_type == 'STUDENT':
+            search_list.insert(1, "Admin courses")
 
     # Test GUI functions (optional)
     def testGUI():
