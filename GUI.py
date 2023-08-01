@@ -134,7 +134,7 @@ class GUI:
             menu_label['background'] = '#FFF98A'
             # Add buttons for instructor actions
             button1 = tk.Button(main_app, text="Add course to semester schedule", bg='yellow', command=lambda: print("Button 1 clicked"))
-            button2 = tk.Button(main_app, text="Search for course(s)", bg='yellow', command=lambda: print("Button 2 clicked"))
+            button2 = tk.Button(main_app, text="Search for course(s)", bg='yellow', command=lambda: GUI.searchCourses(user_type, main_app))
             button3 = tk.Button(main_app, text="Print course roster", bg='yellow', command=lambda: print("Button 3 clicked"))
             button4 = tk.Button(main_app, text="Exit", bg='yellow', command=main_app.destroy)
 
