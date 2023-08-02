@@ -26,19 +26,6 @@ class User:
         # This method is implemented by the subclasses
         raise NotImplementedError("Subclasses must implement the authenticate method.")
 
-    def search_courses(self, params):
-        cursor = self.db_connection.cursor()
-        cursor.execute("SELECT CRN, TITLE, INSTRUCTOR "
-                       "FROM COURSES "
-                       "WHERE CRN LIKE ? OR TITLE LIKE ? OR DEPT LIKE ? " 
-                       "OR STARTTIME = ? OR ENDTIME = ? OR DAYS LIKE ? "
-                       "OR SEMESTER LIKE ? OR YEAR = ? OR CREDITS = ? "
-                       "OR INSTRUCTOR LIKE ?",
-                       (f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%", 
-                        f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%",
-                        f"%{params}%", f"%{params}%"))
-        results = cursor.fetchall()
-        return results
 
 class Admin(User):
     def authenticate(self, username, password):
@@ -53,6 +40,25 @@ class Admin(User):
             self.user_data = (admin_id, admin_name)
             return True
         return False
+
+    def search_courses(self, params):
+        cursor = self.db_connection.cursor()
+        if(params == "ALL" or params == "all"):
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR FROM COURSES")
+            results = cursor.fetchall()
+
+        else:
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR "
+                       "FROM COURSES "
+                       "WHERE CRN LIKE ? OR TITLE LIKE ? OR DEPT LIKE ? " 
+                       "OR STARTTIME = ? OR ENDTIME = ? OR DAYS LIKE ? "
+                       "OR SEMESTER LIKE ? OR YEAR = ? OR CREDITS = ? "
+                       "OR INSTRUCTOR LIKE ?",
+                       (f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%", 
+                        f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%",
+                        f"%{params}%", f"%{params}%"))
+            results = cursor.fetchall()
+        return results
     
     def add_course(self, course):
         cursor = self.db_connection.cursor()
@@ -79,6 +85,25 @@ class Instructor(User):
             self.user_data = (instructor_id, instructor_name)
             return True
         return False
+
+    def search_courses(self, params):
+        cursor = self.db_connection.cursor()
+        if(params == "ALL" or params == "all"):
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR FROM COURSE_SCHEDULE")
+            results = cursor.fetchall()
+
+        else:
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR "
+                       "FROM COURSE_SCHEDULE "
+                       "WHERE CRN LIKE ? OR TITLE LIKE ? OR DEPT LIKE ? " 
+                       "OR STARTTIME = ? OR ENDTIME = ? OR DAYS LIKE ? "
+                       "OR SEMESTER LIKE ? OR YEAR = ? OR CREDITS = ? "
+                       "OR INSTRUCTOR LIKE ?",
+                       (f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%", 
+                        f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%",
+                        f"%{params}%", f"%{params}%"))
+            results = cursor.fetchall()
+        return results
 
     def print_roster(self, instructor_name):
         cursor = self.db_connection.cursor()
@@ -119,6 +144,37 @@ class Student(User):
             self.user_data = (student_id, student_name)
             return True
         return False
+
+    def search_courses(self, params):
+        cursor = self.db_connection.cursor()
+        if(params == "ALL" or params == "all"):
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR FROM STUDENT_SCHEDULE")
+            results = cursor.fetchall()
+
+        else:
+            cursor.execute("SELECT CRN, TITLE, INSTRUCTOR "
+                       "FROM STUDENT_SCHEDULE "
+                       "WHERE CRN LIKE ? OR TITLE LIKE ? OR DEPT LIKE ? " 
+                       "OR STARTTIME = ? OR ENDTIME = ? OR DAYS LIKE ? "
+                       "OR SEMESTER LIKE ? OR YEAR = ? OR CREDITS = ? "
+                       "OR INSTRUCTOR LIKE ?",
+                       (f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%", 
+                        f"%{params}%", f"%{params}%", f"%{params}%", f"%{params}%",
+                        f"%{params}%", f"%{params}%"))
+            results = cursor.fetchall()
+        return results
+
+    def add_course(self, course):
+        cursor = self.db_connection.cursor()
+        cursor.execute("INSERT INTO STUDENT_SCHEDULE (CRN, TITLE, DEPT, STARTTIME, ENDTIME, DAYS, SEMESTER, YEAR, CREDITS, INSTRUCTOR) "
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                       (course.course_CRN, course.course_title, course.course_dept, course.course_startTime, course.course_endTime, course.course_days, course.course_semester, course.course_year, course.course_credits, course.course_instructor))
+        self.db_connection.commit()
+    
+    def remove_course(self, course_CRN):
+        cursor = self.db_connection.cursor()
+        cursor.execute("DELETE FROM STUDENT_SCHEDULE WHERE CRN = ?", (course_CRN,))
+        self.db_connection.commit()
 
 
 class Database:
