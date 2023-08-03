@@ -3,7 +3,6 @@ from tkinter import *
 import tkinter as tk
 import sqlite3
 from Database import *
-# ... (The rest of import statements and class definitions go here)
 
 # Connect to the database
 db_connection = sqlite3.connect("assignment5.db")
@@ -28,6 +27,23 @@ class GUI:
             width=50,
             height=10
             )
+
+        # Adjust size
+        login.geometry("1000x600")
+        bg = PhotoImage(file = "wentworth-logo-1-2.png")
+
+        # Create Canvas
+        canvas1 = Canvas(login, width = 500, height = 200)
+  
+        # Display image
+        canvas1.create_image( 0, 0, image = bg, anchor = "nw")
+
+        #Calculating the center coordinates of the window
+        center_x = login.winfo_screenwidth() // 2
+        center_y = login.winfo_screenwidth() // 2
+
+        #displaying image centered to the window
+        canvas1.create_image(center_x, center_y, image = bg)
 
         usern = tk.Label(
             text="Username: ",
@@ -59,6 +75,7 @@ class GUI:
         exit_b.pack()
 
         login.bind('<Return>', lambda event : confirm.invoke())
+        canvas1.place(relx=0.5, rely=0.5, anchor="center")
         login.mainloop()
 
     # Helper function to get the Entry widget value
@@ -68,6 +85,8 @@ class GUI:
     # Function for user authentication
     def auth(username, password, login_window):
         # Authenticating the user
+        global user
+        #user = None #initializing the user variable
         #user = None
         while True:
 
@@ -165,6 +184,10 @@ class GUI:
 
         main_app.mainloop()
 
+    def backToMenu(search_menu):
+        search_menu.destroy()
+        GUI.display_menu(user.user_type)
+
     # Search for courses
     def searchCourses(user_type, main_app):
         main_app.destroy()
@@ -193,10 +216,11 @@ class GUI:
         search_button.pack(side=RIGHT)
         sb_frame.pack(side=TOP)
 
-
-
-        button1 = tk.Button(search_menu, text="Back", bg='red', command=lambda: print("Button 2 clicked"))
+        button1 = tk.Button(search_menu, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(search_menu))
         button1.pack()
+
+        #button1 = tk.Button(search_menu, text="TEST Back", bg='red', command=lambda: print("Button 2 clicked"))
+        #button1.pack()
 
         search_menu.bind('<Return>', lambda event : search_button.invoke())
         search_menu.mainloop()
