@@ -86,8 +86,7 @@ class GUI:
     def auth(username, password, login_window):
         # Authenticating the user
         global user
-        #user = None #initializing the user variable
-        #user = None
+       
         while True:
 
             # Check in the Admin table
@@ -218,9 +217,7 @@ class GUI:
 
         button1 = tk.Button(search_menu, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(search_menu))
         button1.pack()
-
-        #button1 = tk.Button(search_menu, text="TEST Back", bg='red', command=lambda: print("Button 2 clicked"))
-        #button1.pack()
+        
 
         search_menu.bind('<Return>', lambda event : search_button.invoke())
         search_menu.mainloop()
