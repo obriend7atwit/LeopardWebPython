@@ -170,7 +170,7 @@ class GUI:
             # Add buttons for student actions
             button1 = tk.Button(main_app, text="Add course to student schedule", bg='#30D402', command=lambda: GUI.addCourse(user_type, main_app))
             button2 = tk.Button(main_app, text="Remove course from student schedule", bg='#30D402', command=lambda: GUI.removeCourse(user_type, main_app))
-            button3 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda: print("Button 2 clicked"))
+            button3 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda:GUI.searchCourses(user_type, main_app))
             button4 = tk.Button(main_app, text="Search all courses", bg='#30D402', command=lambda: print("Button 3 clicked"))
             button5 = tk.Button(main_app, text="Exit", bg='#30D402', command=main_app.destroy)
 
@@ -183,8 +183,8 @@ class GUI:
 
         main_app.mainloop()
 
-    def backToMenu(search_menu):
-        search_menu.destroy()
+    def backToMenu(x):
+        x.destroy()
         GUI.display_menu(user.user_type)
 
     # Search for courses
@@ -215,10 +215,10 @@ class GUI:
         search_button.pack(side=RIGHT)
         sb_frame.pack(side=TOP)
 
+        #Back Button to get back to the main menu
         button1 = tk.Button(search_menu, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(search_menu))
         button1.pack()
         
-
         search_menu.bind('<Return>', lambda event : search_button.invoke())
         search_menu.mainloop()
 
@@ -321,6 +321,11 @@ class GUI:
         ar_button = Button(ar_frame, text="Add", command=lambda: user.add_course(modify.get()))
         ar_button.pack(side=LEFT)
         ar_button.pack(side=RIGHT)
+
+        # Add the "Back to Menu" button
+        back_button = Button(ar_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
+        back_button.pack(side=RIGHT)
+
         ar_frame.pack(side=TOP)
 
         ar_menu.bind('<Return>', lambda event : ar_button.invoke())
@@ -364,6 +369,13 @@ class GUI:
         ar_button = Button(ar_frame, text="Remove", command=lambda: GUI.removeHelper(user_type, modify.get(), ar_list))
         ar_button.pack(side=LEFT)
         ar_button.pack(side=RIGHT)
+
+        # Create a frame for the "Back to Menu" button at the bottom
+        back_frame = Frame(ar_menu)
+        back_button = Button(back_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
+        back_button.pack(side=BOTTOM)
+        back_frame.pack(side=BOTTOM)  # Pack this frame at the bottom of ar_menu
+
         ar_frame.pack(side=TOP)
 
         ar_menu.bind('<Return>', lambda event : ar_button.invoke())
