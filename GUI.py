@@ -427,6 +427,23 @@ class GUI:
 
         ar_menu.mainloop()
 
+    def printInstructors(user_type, search_list, search_term):
+        if user_type == 'ADMIN':
+            courses = admin.search_courses(search_term)
+            search_list.delete(0, END)
+            for x in courses:
+                search_list.insert(END, f"{x}")
+        elif user_type == 'INSTRUCTOR':
+            courses = instructor.search_courses(search_term)
+            search_list.delete(0, END)
+            for x in courses:
+                search_list.insert(END, f"{x}")
+        elif user_type == 'STUDENT':
+            courses = student.search_courses(search_term)
+            search_list.delete(0, END)
+            for x in courses:
+                search_list.insert(END, f"{x}")
+
     def addStudent(user_type, main_app):
         main_app.destroy()
         # ar stands for add/remove
