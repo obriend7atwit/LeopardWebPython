@@ -3,7 +3,6 @@ from tkinter import *
 import tkinter as tk
 import sqlite3
 from Database import *
-# ... (The rest of import statements and class definitions go here)
 
 # Connect to the database
 db_connection = sqlite3.connect("assignment5.db")
@@ -28,6 +27,23 @@ class GUI:
             width=50,
             height=10
             )
+
+        # Adjust size
+        login.geometry("1000x600")
+        bg = PhotoImage(file = "wentworth-logo-1-2.png")
+
+        # Create Canvas
+        canvas1 = Canvas(login, width = 500, height = 200)
+  
+        # Display image
+        canvas1.create_image( 0, 0, image = bg, anchor = "nw")
+
+        #Calculating the center coordinates of the window
+        center_x = login.winfo_screenwidth() // 2
+        center_y = login.winfo_screenwidth() // 2
+
+        #displaying image centered to the window
+        canvas1.create_image(center_x, center_y, image = bg)
 
         usern = tk.Label(
             text="Username: ",
@@ -59,6 +75,7 @@ class GUI:
         exit_b.pack()
 
         login.bind('<Return>', lambda event : confirm.invoke())
+        canvas1.place(relx=0.5, rely=0.5, anchor="center")
         login.mainloop()
 
     # Helper function to get the Entry widget value
@@ -68,7 +85,8 @@ class GUI:
     # Function for user authentication
     def auth(username, password, login_window):
         # Authenticating the user
-        #user = None
+        global user
+       
         while True:
 
             # Check in the Admin table
@@ -156,7 +174,7 @@ class GUI:
             # Add buttons for student actions
             button1 = tk.Button(main_app, text="Add course to student schedule", bg='#30D402', command=lambda: GUI.addCourse(user_type, main_app))
             button2 = tk.Button(main_app, text="Remove course from student schedule", bg='#30D402', command=lambda: GUI.removeCourse(user_type, main_app))
-            button3 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda: print("Button 2 clicked"))
+            button3 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda:GUI.searchCourses(user_type, main_app))
             button4 = tk.Button(main_app, text="Search all courses", bg='#30D402', command=lambda: print("Button 3 clicked"))
             button5 = tk.Button(main_app, text="Exit", bg='#30D402', command=main_app.destroy)
 
@@ -168,6 +186,10 @@ class GUI:
             button5.pack()
 
         main_app.mainloop()
+
+    def backToMenu(x):
+        x.destroy()
+        GUI.display_menu(user.user_type)
 
     # Search for courses
     def searchCourses(user_type, main_app):
@@ -196,11 +218,10 @@ class GUI:
         search_button.pack(side=RIGHT)
         sb_frame.pack(side=TOP)
 
-
-
-        button1 = tk.Button(search_menu, text="Back", bg='red', command=lambda: print("Button 2 clicked"))
+        #Back Button to get back to the main menu
+        button1 = tk.Button(search_menu, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(search_menu))
         button1.pack()
-
+        
         search_menu.bind('<Return>', lambda event : search_button.invoke())
         search_menu.mainloop()
 
@@ -327,6 +348,13 @@ class GUI:
         ar_button = Button(ar_frame10, text="Add", command=lambda: GUI.addHelper(user_type, ar_list, modify_CRN.get(), modify_Title.get(), modify_Dept.get(), modify_sTime.get(), modify_eTime.get(), modify_Days.get(), modify_Semester.get(), modify_Year.get(), modify_Credits.get(), modify_Instructor.get()))
         ar_button.pack(side=LEFT)
 
+
+        # Add the "Back to Menu" button
+        back_button = Button(ar_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
+        back_button.pack(side=RIGHT)
+
+        ar_frame.pack(side=TOP)
+
         ar_menu.bind('<Return>', lambda event : ar_button.invoke())
         ar_menu.mainloop()
 
@@ -377,6 +405,13 @@ class GUI:
         ar_button = Button(ar_frame, text="Remove", command=lambda: GUI.removeHelper(user_type, modify.get(), ar_list))
         ar_button.pack(side=LEFT)
         ar_button.pack(side=RIGHT)
+
+        # Create a frame for the "Back to Menu" button at the bottom
+        back_frame = Frame(ar_menu)
+        back_button = Button(back_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
+        back_button.pack(side=BOTTOM)
+        back_frame.pack(side=BOTTOM)  # Pack this frame at the bottom of ar_menu
+
         ar_frame.pack(side=TOP)
 
         ar_menu.bind('<Return>', lambda event : ar_button.invoke())
