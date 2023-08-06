@@ -5,8 +5,9 @@ import sqlite3
 from Database import *
 
 # Connect to the database
-db_connection = sqlite3.connect("assignment5.db")
+db_connection = sqlite3.connect("LeopardWeb.db")
 cursor = db_connection.cursor()
+Database.initDatabase()
 
 # Creating instances of Admin, Instructor, and Student
 admin = Admin(db_connection)
@@ -78,6 +79,10 @@ class GUI:
         canvas1.place(relx=0.5, rely=0.5, anchor="center")
         login.mainloop()
 
+    def logout(current_window):
+        current_window.destroy()
+        GUI.login()
+
     # Helper function to get the Entry widget value
     def checkEntry(entry):
         entry.get()
@@ -139,7 +144,7 @@ class GUI:
             button5 = tk.Button(main_app, text="Remove Instructor from the system", bg='red', command=lambda: GUI.removeInstructor(user_type, main_app))
             button6 = tk.Button(main_app, text="Add Student to the system", bg='red', command=lambda: GUI.addStudent(user_type, main_app))
             button7 = tk.Button(main_app, text="Remove Student from the system", bg='red', command=lambda: GUI.removeStudent(user_type, main_app))
-            button8 = tk.Button(main_app, text="Exit", bg='red', command=main_app.destroy)
+            button8 = tk.Button(main_app, text="Logout", bg='red', command=lambda: GUI.logout(main_app))
 
             # Pack buttons
             button1.pack()
@@ -158,15 +163,13 @@ class GUI:
             button1 = tk.Button(main_app, text="Add course to semester schedule", bg='yellow', command=lambda: GUI.addCourse(user_type, main_app))
             button2 = tk.Button(main_app, text="Remove course from semester schedule", bg='yellow', command=lambda: GUI.removeCourse(user_type, main_app))
             button3 = tk.Button(main_app, text="Search for course(s)", bg='yellow', command=lambda: GUI.searchCourses(user_type, main_app))
-            button4 = tk.Button(main_app, text="Print course roster", bg='yellow', command=lambda: print("Button 3 clicked"))
-            button5 = tk.Button(main_app, text="Exit", bg='yellow', command=main_app.destroy)
+            button4 = tk.Button(main_app, text="Logout", bg='yellow', command=lambda: GUI.logout(main_app))
 
             # Pack buttons
             button1.pack()
             button2.pack()
             button3.pack()
             button4.pack()
-            button5.pack()
 
         elif user_type == "STUDENT":
             main_app['background'] = '#AFFC9A'
@@ -175,15 +178,13 @@ class GUI:
             button1 = tk.Button(main_app, text="Add course to student schedule", bg='#30D402', command=lambda: GUI.addCourse(user_type, main_app))
             button2 = tk.Button(main_app, text="Remove course from student schedule", bg='#30D402', command=lambda: GUI.removeCourse(user_type, main_app))
             button3 = tk.Button(main_app, text="Search for course(s)", bg='#30D402', command=lambda:GUI.searchCourses(user_type, main_app))
-            button4 = tk.Button(main_app, text="Search all courses", bg='#30D402', command=lambda: print("Button 3 clicked"))
-            button5 = tk.Button(main_app, text="Exit", bg='#30D402', command=main_app.destroy)
+            button4 = tk.Button(main_app, text="Logout", bg='#30D402', command=lambda: GUI.logout(main_app))
 
             # Pack buttons
             button1.pack()
             button2.pack()
             button3.pack()
             button4.pack()
-            button5.pack()
 
         main_app.mainloop()
 
@@ -198,11 +199,14 @@ class GUI:
         search_menu.title(f"{user_type} Search application")
 
         # Label for course list
-        search_label = Label(search_menu, width=55, height=5, text = "ALL COURSES")
+        search_label = Label(search_menu, width=55, height=5, text = "SEARCH COURSES")
+        search_label2 = Label(search_menu, width=55, height=5, text = "To print all courses, type 'all' into search bar")
         search_label.pack()
+        search_label2.pack(side=BOTTOM)
 
         # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
         search_list = Listbox(search_menu, bg='white', height=10, width=50, font='Arial')
+        GUI.printCourses(user_type, search_list, "ALL")
         search_list.pack()
 
         # Search box
@@ -350,10 +354,10 @@ class GUI:
 
 
         # Add the "Back to Menu" button
-        back_button = Button(ar_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
-        back_button.pack(side=RIGHT)
-
-        ar_frame.pack(side=TOP)
+        back_frame = Frame(ar_menu)
+        back_button = Button(back_frame, text="Back to Menu", command=lambda: GUI.backToMenu(ar_menu))
+        back_button.pack(side=BOTTOM)
+        back_frame.pack(side=BOTTOM)  # Pack this frame at the bottom of ar_menu
 
         ar_menu.bind('<Return>', lambda event : ar_button.invoke())
         ar_menu.mainloop()
@@ -408,7 +412,7 @@ class GUI:
 
         # Create a frame for the "Back to Menu" button at the bottom
         back_frame = Frame(ar_menu)
-        back_button = Button(back_frame, text="Back to Menu", bg='red', command=lambda: GUI.backToMenu(ar_menu))
+        back_button = Button(back_frame, text="Back to Menu", command=lambda: GUI.backToMenu(ar_menu))
         back_button.pack(side=BOTTOM)
         back_frame.pack(side=BOTTOM)  # Pack this frame at the bottom of ar_menu
 
@@ -431,87 +435,177 @@ class GUI:
     def addInstructor(user_type, main_app):
         main_app.destroy()
         # ar stands for add/remove
-        ar_menu = Tk()
-        ar_menu.title(f"{user_type} Add Instructor")
+        ar_Instructor = Tk()
+        ar_Instructor.title(f"{user_type} Add Instructor")
 
         # Label for course list
-        ar_label = Label(ar_menu, width=55, height=5, text = "ADD INSTRUCTOR")
+        ar_label = Label(ar_Instructor, width=55, height=5, text = "ADD INSTRUCTOR")
         ar_label.pack()
 
-        # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
-        ar_list = Listbox(ar_menu, bg='white', height=10, width=50, font='Arial')
-        GUI.printCourses(user_type, ar_list, "ALL")
+        # Pulls instructors from the database and adds them to listbox (should pull from different database depending on user)
+        ar_list = Listbox(ar_Instructor, bg='white', height=10, width=50, font='Arial')
+        GUI.printInstructors(ar_list)
         ar_list.pack()
 
-        ar_menu.mainloop()
+        # Search box
+        ar_frame1 = Frame(ar_Instructor)
+        ar_frame2 = Frame(ar_Instructor)
+        ar_frame3 = Frame(ar_Instructor)
+        ar_frame4 = Frame(ar_Instructor)
+        ar_frame5 = Frame(ar_Instructor)
+        ar_frame6 = Frame(ar_Instructor)
+        ar_frame7 = Frame(ar_Instructor)
+        ar_frame8 = Frame(ar_Instructor)
+        ar_frame9 = Frame(ar_Instructor)
+
+        # ID
+        ar_box1 = Label(ar_frame1, text = "ID: ")
+        ar_box1.pack(side=TOP)
+        modify_ID = Entry(ar_frame1)
+        modify_ID.pack(side=LEFT)
+        modify_ID.focus_set()
+        # Name
+        ar_box2 = Label(ar_frame2, text = "Name: ")
+        ar_box2.pack(side=TOP)
+        modify_Name = Entry(ar_frame2)
+        modify_Name.pack(side=LEFT)
+        modify_Name.focus_set()
+        # Surname
+        ar_box3 = Label(ar_frame3, text = "Surname: ")
+        ar_box3.pack(side=TOP)
+        modify_Surname = Entry(ar_frame3)
+        modify_Surname.pack(side=LEFT)
+        modify_Surname.focus_set()
+        # Title
+        ar_box4 = Label(ar_frame4, text = "Title: ")
+        ar_box4.pack(side=TOP)
+        modify_Title = Entry(ar_frame4)
+        modify_Title.pack(side=LEFT)
+        modify_Title.focus_set()
+        # Hire year
+        ar_box5 = Label(ar_frame5, text = "Hire year: ")
+        ar_box5.pack(side=TOP)
+        modify_Hireyear = Entry(ar_frame5)
+        modify_Hireyear.pack(side=LEFT)
+        modify_Hireyear.focus_set()
+        # Department
+        ar_box6 = Label(ar_frame6, text = "Department: ")
+        ar_box6.pack(side=TOP)
+        modify_Dept = Entry(ar_frame6)
+        modify_Dept.pack(side=LEFT)
+        modify_Dept.focus_set()
+        # Email
+        ar_box7 = Label(ar_frame7, text = "Email: ")
+        ar_box7.pack(side=TOP)
+        modify_Email = Entry(ar_frame7)
+        modify_Email.pack(side=LEFT)
+        modify_Email.focus_set()
+        # Username
+        ar_box8 = Label(ar_frame8, text = "Username: ")
+        ar_box8.pack(side=TOP)
+        modify_Username = Entry(ar_frame8)
+        modify_Username.pack(side=LEFT)
+        modify_Username.focus_set()
+        # Password
+        ar_box9 = Label(ar_frame9, text = "Password: ")
+        ar_box9.pack(side=TOP)
+        modify_Password = Entry(ar_frame9)
+        modify_Password.pack(side=LEFT)
+        modify_Password.focus_set()
+        
+
+        #ar_button = Button(ar_frame1, text="Add", command=lambda: user.add_course(modify_CRN.get()))
+        #ar_button.pack(side=LEFT)
+        ar_frame1.pack(side=LEFT)
+        ar_frame2.pack(side=LEFT)
+        ar_frame3.pack(side=LEFT)
+        ar_frame4.pack(side=LEFT)
+        ar_frame5.pack(side=LEFT)
+        ar_frame6.pack(side=LEFT)
+        ar_frame7.pack(side=LEFT)
+        ar_frame8.pack(side=LEFT)
+        ar_frame9.pack(side=LEFT)
+
+
+        ar_button = Button(ar_frame9, text="Add", command=lambda: GUI.addInstructorHelper(user_type, ar_list, modify_ID.get(), modify_Name.get(), modify_Surname.get(), modify_Title.get(), modify_Hireyear.get(), modify_Dept.get(), modify_Email.get(), modify_Username.get(), modify_Password.get()))
+        ar_button.pack(side=LEFT)
+
+
+        # Add the "Back to Menu" button
+        back_frame = Frame(ar_Instructor)
+        back_button = Button(back_frame, text="Back to Menu", command=lambda: GUI.backToMenu(ar_Instructor))
+        back_button.pack(side=BOTTOM)
+        back_frame.pack(side=BOTTOM)  # Pack this frame at the bottom of ar_menu
+
+        ar_Instructor.bind('<Return>', lambda event : ar_button.invoke())
+        ar_Instructor.mainloop()
+
+    def addInstructorHelper(user_type, ar_list, ID, name, surname, title, hireyear, dept, email, username, password):
+        cursor.execute("INSERT INTO INSTRUCTOR (ID, NAME, SURNAME, TITLE, HIREYEAR, DEPT, EMAIL, USERNAME, PASSWORD) "
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                       (ID, name, surname, title, hireyear, dept, email, username, password))
+        db_connection.commit()
+        GUI.printInstructors(ar_list)
+
+    def printInstructors(ar_list):
+        cursor.execute("SELECT * FROM INSTRUCTOR")
+        instructors = cursor.fetchall()
+        ar_list.delete(0, END)
+        for x in instructors:
+            ar_list.insert(END, f"{x}")
+        
 
     def removeInstructor(user_type, main_app):
         main_app.destroy()
         # ar stands for add/remove
-        ar_menu = Tk()
-        ar_menu.title(f"{user_type} Remove Instructor")
+        ar_Instructor = Tk()
+        ar_Instructor.title(f"{user_type} Remove Instructor")
 
         # Label for course list
-        ar_label = Label(ar_menu, width=55, height=5, text = "REMOVE INSTRUCTOR")
+        ar_label = Label(ar_Instructor, width=55, height=5, text = "REMOVE INSTRUCTOR")
         ar_label.pack()
 
         # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
-        ar_list = Listbox(ar_menu, bg='white', height=10, width=50, font='Arial')
+        ar_list = Listbox(ar_Instructor, bg='white', height=10, width=50, font='Arial')
         GUI.printCourses(user_type, ar_list, "ALL")
         ar_list.pack()
 
-        ar_menu.mainloop()
+        ar_Instructor.mainloop()
 
-    def printInstructors(user_type, search_list, search_term):
-        if user_type == 'ADMIN':
-            courses = admin.search_courses(search_term)
-            search_list.delete(0, END)
-            for x in courses:
-                search_list.insert(END, f"{x}")
-        elif user_type == 'INSTRUCTOR':
-            courses = instructor.search_courses(search_term)
-            search_list.delete(0, END)
-            for x in courses:
-                search_list.insert(END, f"{x}")
-        elif user_type == 'STUDENT':
-            courses = student.search_courses(search_term)
-            search_list.delete(0, END)
-            for x in courses:
-                search_list.insert(END, f"{x}")
 
     def addStudent(user_type, main_app):
         main_app.destroy()
         # ar stands for add/remove
-        ar_menu = Tk()
-        ar_menu.title(f"{user_type} Add Student")
+        ar_Student = Tk()
+        ar_Student.title(f"{user_type} Add Student")
 
         # Label for course list
-        ar_label = Label(ar_menu, width=55, height=5, text = "ADD STUDENT")
+        ar_label = Label(ar_Student, width=55, height=5, text = "ADD STUDENT")
         ar_label.pack()
 
         # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
-        ar_list = Listbox(ar_menu, bg='white', height=10, width=50, font='Arial')
+        ar_list = Listbox(ar_Student, bg='white', height=10, width=50, font='Arial')
         GUI.printCourses(user_type, ar_list, "ALL")
         ar_list.pack()
 
-        ar_menu.mainloop()
+        ar_Student.mainloop()
 
     def removeStudent(user_type, main_app):
         main_app.destroy()
         # ar stands for add/remove
-        ar_menu = Tk()
-        ar_menu.title(f"{user_type} Remove Student")
+        ar_Student = Tk()
+        ar_Student.title(f"{user_type} Remove Student")
 
         # Label for course list
-        ar_label = Label(ar_menu, width=55, height=5, text = "REMOVE STUDENT")
+        ar_label = Label(ar_Student, width=55, height=5, text = "REMOVE STUDENT")
         ar_label.pack()
 
         # Pulls courses from the database and adds them to listbox (should pull from different database depending on user)
-        ar_list = Listbox(ar_menu, bg='white', height=10, width=50, font='Arial')
+        ar_list = Listbox(ar_Student, bg='white', height=10, width=50, font='Arial')
         GUI.printCourses(user_type, ar_list, "ALL")
         ar_list.pack()
 
-        ar_menu.mainloop()
+        ar_Student.mainloop()
 
     # Test GUI functions (optional)
     def testGUI():
